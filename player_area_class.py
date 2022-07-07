@@ -14,7 +14,8 @@ PRICE_CITY_MATERIAL = 5
 PRICE_CITY_COINS = 5
 MAX_VILLAGES = 4
 MIN_TRUST_TO_WIN = 20
-
+START_TROOPS = 5
+CITY_POINT_MULTIPLIER = 5
 
 class Area:
     def __init__(self, name: str):
@@ -161,3 +162,13 @@ class Player:
         for resource, n_resource in self.resources_stored.keys():
             trade_possibilities[resource] = np.arange(n_resource) + 1
         return trade_possibilities
+
+    def choose_start_area(self, area: Area):
+        self.conquer_area(area, START_TROOPS)
+
+    def calc_points(self):
+        points = self.resources_beginning_round['trust'] - self.hunger_tokens - self.bloodshed_tokens +\
+                 self.resources_beginning_round['villages'] +\
+                 CITY_POINT_MULTIPLIER * self.resources_beginning_round['cities']
+
+        return points

@@ -105,7 +105,3 @@ def generate_areas():
             areas[area_name] = area
 
     return areas
-
-
-if __name__ == '__main__':
-    print(calculate_winner(3, 2, 10, 12, False))
