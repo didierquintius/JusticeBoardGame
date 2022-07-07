@@ -105,9 +105,11 @@ def generate_areas():
             areas[area_name] = area
 
     return areas
+
+
 def start_game(players: list, areas: dict):
     for player in players:
-        print('| ', end = "")
+        print('| ', end="")
         for area_name, area in areas.items():
             if area.resources['troops'] == 0:
                 print(area_name, end=" | ")
@@ -115,7 +117,28 @@ def start_game(players: list, areas: dict):
         chosen_area = input(f'Choose area, {player.name}:')
 
         player.choose_start_area(areas[chosen_area])
+        player.set_beginning_resources(areas)
 
-def player_turn(player: Player):
+
+def player_turn(player: Player, areas: dict):
     player.check_win()
-    player
+    player.gather_resources()
+    choice = input("Choose Action (Trade, Recruit, Build or Attack):")
+    choice = choice.lower()
+    while choice == 'recruit' or choice == 'trade':
+        if choice == 'recruit':
+            print(f'Max amount of troops to add: {player.calc_possible_troops()}')
+            n_troops = input('Amount of troops to add:')
+            player.add_troops(int(n_troops))
+            while player.unplaced_troops > 0:
+                print('Available areas: ' + ' '.join(player.player_areas))
+                print(f'Available troops:{player.unplaced_troops}')
+                area_n_troops = input('Area, Troops:')
+                area, n_troops = area_n_troops.split(sep=',')
+                player.unplaced_troops -= int(n_troops)
+                player.add_troops_to_area(areas[area], int(n_troops))
+        else:
+            print('TBD')
+        choice = input("Choose Action (Trade, Recruit, Build or Attack):").lower()
+
+

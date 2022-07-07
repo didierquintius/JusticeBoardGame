@@ -6,5 +6,4 @@ if __name__ == '__main__':
     player2 = Player('Player2')
     players = [player1, player2]
     start_game(players, areas)
-    print(player1.player_areas)
-    print(areas['A00'].resources['troops'])
+    player_turn(players[0], areas)

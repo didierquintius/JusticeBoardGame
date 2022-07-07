@@ -164,6 +164,7 @@ class Player:
         return trade_possibilities
 
     def choose_start_area(self, area: Area):
+        self.unplaced_troops = START_TROOPS
         self.conquer_area(area, START_TROOPS)
 
     def calc_points(self):
