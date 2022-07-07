@@ -79,10 +79,10 @@ def perform_battle(attacker_area: Area, defender_area: Area, defender: Player):
         defender.remove_area(defender_area.name)
 
 
-def possible_attack_areas(current_area: Area, areas: dict):
+def possible_attack_areas(current_area_name: str, areas: dict):
     deltas = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     possible_locations = []
-
+    current_area = areas[current_area_name]
     for delta_x, delta_y in deltas:
         possible_locations += [(current_area.location[0] - delta_x, current_area.location[1] - delta_y)]
 
@@ -120,25 +120,54 @@ def start_game(players: list, areas: dict):
         player.set_beginning_resources(areas)
 
 
-def player_turn(player: Player, areas: dict):
+def recruit_steps(player: Player, areas: dict):
+    print(f'Max amount of troops to add: {player.calc_possible_troops()}')
+    n_troops = input('Amount of troops to add:')
+    player.add_troops(int(n_troops))
+    while player.unplaced_troops > 0:
+        print('Available areas: ' + ' '.join(player.player_areas))
+        print(f'Available troops:{player.unplaced_troops}')
+        area_n_troops = input('Area, Troops:')
+        area, n_troops = area_n_troops.split(sep=',')
+        player.unplaced_troops -= int(n_troops)
+        player.add_troops_to_area(areas[area], int(n_troops))
+
+
+def attack_steps(player: Player, areas: dict, players: list):
+    choice = None
+    while choice != 'Continue':
+        print('Possible Areas:' + ' '.join(player.player_areas))
+        choice = input("Choose Area to attack from (or Continue): ")
+        if choice == 'Continue':
+            continue
+        attack_area = choice
+        attack_possibilities = possible_attack_areas(attack_area, areas)
+        attack_possibilities = [area for area in attack_possibilities if area not in player.player_areas]
+        print('Possible Areas to attack:' + ', '.join(attack_possibilities))
+        choice = input("Choose Area to attack (or Go Back): ")
+        if choice == 'Go Back':
+            continue
+
+        defend_player = [player for player in players if choice in player.player_areas]
+        if len(defend_player) == 0:
+            print(f'possible troops to move:{areas[attack_area].resources["troops"] - 1}')
+            n_troops_to_move = input('Choose troops to move:')
+            player.conquer_area(areas[choice], int(n_troops_to_move))
+            areas[attack_area].resources["troops"] -= n_troops_to_move
+        else:
+            perform_battle(areas[attack_area], areas[choice], defend_player[0])
+
+
+def player_turn(player: Player, areas: dict, players: list):
     player.check_win()
     player.gather_resources()
-    choice = input("Choose Action (Trade, Recruit, Build or Attack):")
+    choice = input("Choose Action (Recruit, Build or Attack):")
     choice = choice.lower()
     while choice == 'recruit' or choice == 'trade':
         if choice == 'recruit':
-            print(f'Max amount of troops to add: {player.calc_possible_troops()}')
-            n_troops = input('Amount of troops to add:')
-            player.add_troops(int(n_troops))
-            while player.unplaced_troops > 0:
-                print('Available areas: ' + ' '.join(player.player_areas))
-                print(f'Available troops:{player.unplaced_troops}')
-                area_n_troops = input('Area, Troops:')
-                area, n_troops = area_n_troops.split(sep=',')
-                player.unplaced_troops -= int(n_troops)
-                player.add_troops_to_area(areas[area], int(n_troops))
+            recruit_steps(player, areas)
         else:
             print('TBD')
-        choice = input("Choose Action (Trade, Recruit, Build or Attack):").lower()
 
-
+    if choice == 'attack':
+        attack_steps(player, areas, players)

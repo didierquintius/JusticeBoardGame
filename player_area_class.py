@@ -123,9 +123,8 @@ class Player:
             print('Not in player area')
             return None
 
-        troops_to_place = min(n_troops, self.unplaced_troops)
+        troops_to_place = n_troops
         area.resources['troops'] += troops_to_place
-        self.unplaced_troops -= troops_to_place
 
     def add_hunger_tokens(self):
         if self.resources_stored['food'] < self.resources_beginning_round['villages']:
@@ -138,12 +137,22 @@ class Player:
         possibility = enough_coins and enough_material and area.resources['villages'] < MAX_VILLAGES
         return possibility
 
+    def add_village(self, area: Area):
+        self.resources_stored['coins'] -= PRICE_VILLAGE_COINS
+        self.resources_stored['material'] -= PRICE_VILLAGE_MATERIAL
+        area.resources['villages'] += 1
+
     def can_add_city(self, area: Area):
         enough_coins = self.resources_stored['coins'] >= PRICE_CITY_COINS
         enough_material = self.resources_stored['material'] >= PRICE_CITY_MATERIAL
 
         possibility = enough_coins and enough_material and area.resources['cities'] == 0
         return possibility
+
+    def add_city(self, area: Area):
+        self.resources_stored['coins'] -= PRICE_CITY_COINS
+        self.resources_stored['material'] -= PRICE_CITY_MATERIAL
+        area.resources['cities'] += 1
 
     def conquer_area(self, area: Area, n_troops: int):
         self.add_area(area.name)
