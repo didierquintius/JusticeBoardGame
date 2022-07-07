@@ -172,3 +172,5 @@ class Player:
                  CITY_POINT_MULTIPLIER * self.resources_beginning_round['cities']
 
         return points
+
+

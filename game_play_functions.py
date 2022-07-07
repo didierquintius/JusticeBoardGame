@@ -1,8 +1,8 @@
 import numpy as np
 from player_area_class import Player, Area
 
-SIZE_BOARD_X = 6
-SIZE_BOARD_Y = 6
+SIZE_BOARD_X = 3
+SIZE_BOARD_Y = 3
 MAX_DEFENDER_DICE = 2
 MAX_ATTACKER_DICE = 3
 SPECIAL_DIE_DISTRIBUTION = [3, 3, 3, 4, 5, 6]
@@ -16,7 +16,7 @@ def trade_resources(player_1: Player, resource_1: str, n_resource_1: int, player
     player_2.resources_stored[resource_1] -= n_resource_1
 
 
-def calculate_dice_loss(dice_attack, dice_defend):
+def calculate_dice_loss(dice_attack: np.array, dice_defend: np.array):
     loss_attack = 0
     loss_defend = 0
     while len(dice_attack) > 0 and len(dice_defend) > 0:
@@ -105,3 +105,17 @@ def generate_areas():
             areas[area_name] = area
 
     return areas
+def start_game(players: list, areas: dict):
+    for player in players:
+        print('| ', end = "")
+        for area_name, area in areas.items():
+            if area.resources['troops'] == 0:
+                print(area_name, end=" | ")
+        print("")
+        chosen_area = input(f'Choose area, {player.name}:')
+
+        player.choose_start_area(areas[chosen_area])
+
+def player_turn(player: Player):
+    player.check_win()
+    player
