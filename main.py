@@ -5,6 +5,6 @@ if __name__ == '__main__':
     player_names = ['Player1', 'Player2']
     players = []
     for player_name in player_names:
-        players += Player(player_name)
+        players += [Player(player_name)]
     start_game(players, areas)
     player_turn(players[0], areas, players)

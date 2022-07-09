@@ -129,7 +129,6 @@ def recruit_steps(player: Player, areas: dict):
         print(f'Available troops:{player.unplaced_troops}')
         area_n_troops = input('Area, Troops:')
         area, n_troops = area_n_troops.split(sep=',')
-        player.unplaced_troops -= int(n_troops)
         player.add_troops_to_area(areas[area], int(n_troops))
 
 
@@ -153,9 +152,24 @@ def attack_steps(player: Player, areas: dict, players: list):
             print(f'possible troops to move:{areas[attack_area].resources["troops"] - 1}')
             n_troops_to_move = input('Choose troops to move:')
             player.conquer_area(areas[choice], int(n_troops_to_move))
-            areas[attack_area].resources["troops"] -= n_troops_to_move
+            areas[attack_area].resources["troops"] -= int(n_troops_to_move)
         else:
             perform_battle(areas[attack_area], areas[choice], defend_player[0])
+
+
+def build_steps(player, areas):
+    choice = 'City'
+    while choice == 'City' or choice == 'Village':
+        choice = input('Build City or Village (type any other key to end build turn):')
+        if choice == 'City':
+            possible_build_areas = [area for area in areas.values() if player.can_add_city(area)]
+            area = input('Build City in which area:' + ', '.join(possible_build_areas))
+            player.add_city(areas[area])
+
+        if choice == 'Village':
+            possible_build_areas = [area for area in areas.values() if player.can_add_village(area)]
+            area = input('Build Village in which area:' + ', '.join(possible_build_areas))
+            player.add_village(areas[area])
 
 
 def player_turn(player: Player, areas: dict, players: list):
@@ -163,11 +177,15 @@ def player_turn(player: Player, areas: dict, players: list):
     player.gather_resources()
     choice = input("Choose Action (Recruit, Build or Attack):")
     choice = choice.lower()
-    while choice == 'recruit' or choice == 'trade':
-        if choice == 'recruit':
-            recruit_steps(player, areas)
-        else:
-            print('TBD')
+
+    while choice == 'recruit':
+        recruit_steps(player, areas)
+        choice = input("Choose Action (Recruit, Build or Attack):")
+
+    if choice == 'build':
+        build_steps(player, areas)
 
     if choice == 'attack':
         attack_steps(player, areas, players)
+    player.add_hunger_tokens()
+    player.add_trust_to_player_areas(areas)

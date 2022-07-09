@@ -123,8 +123,8 @@ class Player:
             print('Not in player area')
             return None
 
-        troops_to_place = n_troops
-        area.resources['troops'] += troops_to_place
+        area.resources['troops'] += n_troops
+        self.unplaced_troops -= int(n_troops)
 
     def add_hunger_tokens(self):
         if self.resources_stored['food'] < self.resources_beginning_round['villages']:
@@ -158,8 +158,10 @@ class Player:
         self.add_area(area.name)
         self.add_troops_to_area(area, n_troops)
 
+
     def surrender_area(self, area: Area):
-        area.resources['troops'] = 0
+        for resource in PLAYER_RESOURCES:
+            area.resources[resource] = 0
         self.remove_area(area.name)
 
     def check_win(self):
@@ -182,5 +184,10 @@ class Player:
                  CITY_POINT_MULTIPLIER * self.resources_beginning_round['cities']
 
         return points
+
+    def add_trust_to_player_areas(self, areas: dict):
+        for area_name in self.player_areas:
+            areas[area_name].add_trust()
+
 
 
