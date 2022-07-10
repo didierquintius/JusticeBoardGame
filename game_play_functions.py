@@ -136,13 +136,19 @@ def attack_steps(player: Player, areas: dict, players: list):
     choice = None
     while choice != 'Continue':
         print('Possible Areas:' + ' '.join(player.player_areas))
+        player_troops_areas = [str(areas[area].resources['troops']) for area in player.player_areas if areas[area]]
+        print('Troops:' + ', '.join(player_troops_areas))
         choice = input("Choose Area to attack from (or Continue): ")
         if choice == 'Continue':
-            continue
+            return
         attack_area = choice
         attack_possibilities = possible_attack_areas(attack_area, areas)
         attack_possibilities = [area for area in attack_possibilities if area not in player.player_areas]
+
         print('Possible Areas to attack:' + ', '.join(attack_possibilities))
+        player_troops_areas = [str(areas[area].resources['troops']) for area in attack_possibilities]
+        print('Troops:' + ', '.join(player_troops_areas))
+
         choice = input("Choose Area to attack (or Go Back): ")
         if choice == 'Go Back':
             continue
