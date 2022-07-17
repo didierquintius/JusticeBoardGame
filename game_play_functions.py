@@ -97,6 +97,8 @@ def possible_attack_areas(current_area_name: str, areas: dict):
 
 def generate_areas():
     areas = {}
+
+    # generate a area for each location on the board
     for i in range(SIZE_BOARD_X):
         for j in range(SIZE_BOARD_Y):
             area_name = f'A{i}{j}'

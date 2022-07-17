@@ -26,8 +26,8 @@ class Area:
             self.resources[resource] = 0
         self.location = (0, 0)
 
+
     def generate_state(self, location: tuple):
-        # load the general information into its correct variables
         self.location = location
 
         # select a random amount of villages for each area between 0 and 3

@@ -22,10 +22,10 @@ def add_player_window():
     root.title = ""
 
     title = Label(root, text='Justice Board Game')
-    title.grid(row=0, column=1)
+    title.grid(row=0, column=0, columnspan=2)
 
     message = Label(root, text='Add Player')
-    message.grid(row=1, column=1)
+    message.grid(row=1, column=0, columnspan=2)
 
     input_field = Entry(root, width=50, font=('Helvetica', 8))
     input_field.grid(row=2, column=0)
@@ -44,10 +44,11 @@ def add_player_window():
     my_button = Button(root, text="Add", command=lambda: add_player(PLAYER_NAMES))
     my_button.grid(row=2, column=1)
 
-    move_on_button = Button(root, text='Continue')
+    move_on_button = Button(root, text='Continue', command=root.quit)
     move_on_button.grid(row=3, column=1)
 
     root.mainloop()
 
 
-add_player_window()
+if __name__ == '__main__':
+    game_play()
